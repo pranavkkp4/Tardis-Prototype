@@ -4,86 +4,100 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Tardis Prototype</title>
-  <!--
-    Tardis Prototype
-    This is the client side of the Tardis project.  It is designed to run on a
-    static hosting platform such as GitHub Pages.  The page provides a
-    simple chat interface with slider controls for honesty and humour as well
-    as speech input and output.  All communication with the language model
-    happens through a serverless proxy (see ../tardis-prototype-proxy).  The
-    theme uses light greys, blues and whites to give a calm, futuristic feel.
-  -->
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header>
+  <header class="top">
     <h1>Tardis Prototype</h1>
-    <p class="sub">A simple assistant with voice support. Hosted on GitHub Pages.</p>
+    <p class="sub">A simple assistant with voice + local memory. Hosted on GitHub Pages.</p>
   </header>
 
-  <main>
-    <section class="panel">
+  <main class="layout">
+    <section class="card controls">
       <div class="row">
         <label for="model">Model</label>
         <select id="model">
-          <!-- Default model; you can add more options if you update your worker -->
-          <option value="google/gemma-2-2b-it">google/gemma-2-2b-it</option>
+          <option value="google/gemma-2-2b-it" selected>google/gemma-2-2b-it</option>
         </select>
       </div>
 
-      <div class="row">
+      <div class="row slider">
         <label for="honesty">Honesty</label>
         <input id="honesty" type="range" min="0" max="100" value="85" />
-        <span id="honestyVal">85</span>
+        <span id="honestyVal" class="pill">85</span>
+      </div>
+
+      <div class="row slider">
+        <label for="humor">Humor</label>
+        <input id="humor" type="range" min="0" max="100" value="20" />
+        <span id="humorVal" class="pill">20</span>
       </div>
 
       <div class="row">
-        <label for="humor">Humor</label>
-        <input id="humor" type="range" min="0" max="100" value="20" />
-        <span id="humorVal">20</span>
+        <label>Voice</label>
+        <button id="mic" class="btn" type="button">🎙️ Mic</button>
+        <label class="check">
+          <input id="speak" type="checkbox" checked />
+          Read replies aloud
+        </label>
       </div>
 
-      <div class="row voiceRow">
-        <label for="speak">Voice</label>
-        <div class="voiceControls">
-          <button id="mic" type="button" aria-label="Toggle microphone input">🎙️ Mic</button>
-          <label class="toggle">
-            <input id="speak" type="checkbox" checked />
-            <span>Read replies aloud</span>
-          </label>
-        </div>
-      </div>
-
-      <div class="row statusRow">
+      <div class="row status">
         <label>Status</label>
-        <span id="status" class="status">Ready</span>
+        <div id="status" class="statusText">Ready</div>
       </div>
 
-      <details class="hint">
+      <details class="notes">
         <summary>Notes</summary>
-        <ul>
-          <li>This page communicates with your Cloudflare worker via HTTP. Update <code>WORKER_BASE_URL</code> in <code>app.js</code> after you deploy.</li>
-          <li>Speech recognition works best in Chrome and Edge. Other browsers may not support microphone input.</li>
-        </ul>
+
+        <div class="noteBlock">
+          <div class="noteTitle">Memory</div>
+          <p class="noteText">
+            The assistant now remembers the conversation by sending a rolling history to the model.
+            You can clear memory below.
+          </p>
+          <div class="noteActions">
+            <button id="clearMemory" type="button" class="btn btn-secondary">Clear Memory</button>
+            <label class="check">
+              <input id="useSummary" type="checkbox" checked />
+              Use “summary memory”
+            </label>
+          </div>
+          <div class="noteSmall">
+            Tip: Commands: <code>/rot13 TEXT</code>, <code>/caesar TEXT</code>, <code>/caesar 13 TEXT</code>
+          </div>
+        </div>
+
+        <div class="noteBlock">
+          <div class="noteTitle">Cipher Tools (client-side, free)</div>
+          <label class="miniLabel" for="cipherIn">Text</label>
+          <textarea id="cipherIn" rows="3" placeholder="Paste encoded text here..."></textarea>
+
+          <div class="noteActions">
+            <button id="btnRot13" type="button" class="btn">ROT13</button>
+            <button id="btnCaesarAuto" type="button" class="btn">Caesar Auto</button>
+          </div>
+
+          <label class="miniLabel" for="cipherOut">Output</label>
+          <textarea id="cipherOut" rows="6" readonly placeholder="Decoded output will appear here..."></textarea>
+        </div>
       </details>
+
+      <div class="footerLine">
+        Powered by Cloudflare Workers and Hugging Face.
+      </div>
     </section>
 
-    <section class="chat">
-      <div id="log" class="log"></div>
+    <section class="card chat">
+      <div id="log" class="log" aria-live="polite"></div>
 
       <form id="form" class="composer">
-        <input id="msg" placeholder="Ask Tardis Prototype…" autocomplete="off" />
-        <button type="submit">Send</button>
+        <input id="msg" class="msg" type="text" placeholder="Type a message…" autocomplete="off" />
+        <button class="btn" type="submit">Send</button>
       </form>
-
-      <div class="small">Try commands like “Plan my weekend”, “Summarize: …”, or “Make a checklist for …”</div>
     </section>
   </main>
 
-  <footer>
-    <span>Site theme: light grey, blue and white. Powered by Cloudflare Workers and Hugging Face.</span>
-  </footer>
-
-  <script src="app.js?v=2"></script>
+  <script src="app.js?v=3"></script>
 </body>
 </html>
