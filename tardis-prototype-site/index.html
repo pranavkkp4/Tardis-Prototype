@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Tardis Prototype</title>
+  <!--
+    Tardis Prototype
+    This is the client side of the Tardis project.  It is designed to run on a
+    static hosting platform such as GitHub Pages.  The page provides a
+    simple chat interface with slider controls for honesty and humour as well
+    as speech input and output.  All communication with the language model
+    happens through a serverless proxy (see ../tardis-prototype-proxy).  The
+    theme uses light greys, blues and whites to give a calm, futuristic feel.
+  -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <h1>Tardis Prototype</h1>
+    <p class="sub">A simple assistant with voice support. Hosted on GitHub Pages.</p>
+  </header>
+
+  <main>
+    <section class="panel">
+      <div class="row">
+        <label for="model">Model</label>
+        <select id="model">
+          <!-- Default model; you can add more options if you update your worker -->
+          <option value="google/gemma-2-2b-it">google/gemma-2-2b-it</option>
+        </select>
+      </div>
+
+      <div class="row">
+        <label for="honesty">Honesty</label>
+        <input id="honesty" type="range" min="0" max="100" value="85" />
+        <span id="honestyVal">85</span>
+      </div>
+
+      <div class="row">
+        <label for="humor">Humor</label>
+        <input id="humor" type="range" min="0" max="100" value="20" />
+        <span id="humorVal">20</span>
+      </div>
+
+      <div class="row voiceRow">
+        <label for="speak">Voice</label>
+        <div class="voiceControls">
+          <button id="mic" type="button" aria-label="Toggle microphone input">🎙️ Mic</button>
+          <label class="toggle">
+            <input id="speak" type="checkbox" checked />
+            <span>Read replies aloud</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="row statusRow">
+        <label>Status</label>
+        <span id="status" class="status">Ready</span>
+      </div>
+
+      <details class="hint">
+        <summary>Notes</summary>
+        <ul>
+          <li>This page communicates with your Cloudflare worker via HTTP. Update <code>WORKER_BASE_URL</code> in <code>app.js</code> after you deploy.</li>
+          <li>Speech recognition works best in Chrome and Edge. Other browsers may not support microphone input.</li>
+        </ul>
+      </details>
+    </section>
+
+    <section class="chat">
+      <div id="log" class="log"></div>
+
+      <form id="form" class="composer">
+        <input id="msg" placeholder="Ask Tardis Prototype…" autocomplete="off" />
+        <button type="submit">Send</button>
+      </form>
+
+      <div class="small">Try commands like “Plan my weekend”, “Summarize: …”, or “Make a checklist for …”</div>
+    </section>
+  </main>
+
+  <footer>
+    <span>Site theme: light grey, blue and white. Powered by Cloudflare Workers and Hugging Face.</span>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+name = "tardis-proxy"
+main = "src/index.js"
+compatibility_date = "2025-12-01"
+
+# Optional variables for CORS.  You can override these via `wrangler secret put`.
+[vars]
+# ALLOWED_ORIGIN allows you to lock down cross‑origin requests.  Set it to
+# "https://<your-github-username>.github.io" (without trailing slash) to only
+# accept requests from your published pages.  Leave it as "*" to accept
+# requests from any origin while testing.
+ALLOWED_ORIGIN = "*"
