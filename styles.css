@@ -1,20 +1,18 @@
 /*
   styles.css for Tardis Prototype
 
-  This stylesheet defines a clean light theme built from greys, blues and white.
-  Panels sit on a white background with subtle grey borders.  Accent colours
-  highlight interactive elements like buttons and sliders.  This file is kept
-  separate from the markup so that the look and feel can be adjusted without
-  touching the HTML or JavaScript.
+  Dark theme variant built from deep navy blues with grey and white text.
+  Panels sit on a slightly lighter blue background with soft borders.
+  Accent blues highlight interactive elements while preserving readability.
 */
 
 :root {
-  --bg: #f0f4f8;       /* very light grey with a hint of blue */
-  --panel: #ffffff;     /* white panels */
-  --text: #1e293b;      /* dark blue-grey for main text */
-  --muted: #6b7280;     /* muted grey for secondary text */
-  --accent: #3b82f6;    /* primary blue accent */
-  --border: rgba(0, 0, 0, 0.1); /* light grey border */
+  --bg: #0b1f3a;              /* dark navy background */
+  --panel: #122b4d;           /* slightly lighter blue panels */
+  --text: #ffffff;            /* primary white text */
+  --muted: #cfd6df;           /* light grey secondary text */
+  --accent: #4aa3ff;          /* bright blue accent */
+  --border: rgba(255,255,255,0.15); /* soft light border */
 }
 
 * {
@@ -65,7 +63,7 @@ main {
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 12px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
 }
 
 .row {
@@ -84,25 +82,34 @@ main {
 
 .row select,
 .composer input {
-  background: #f9fafb;
+  background: rgba(255,255,255,0.08);
   border: 1px solid var(--border);
   color: var(--text);
   border-radius: 10px;
   padding: 10px;
 }
 
+.row select option {
+  background: var(--panel);
+  color: var(--text);
+}
+
 button {
-  background: rgba(59, 130, 246, 0.1);
-  border: 1px solid rgba(59, 130, 246, 0.3);
+  background: rgba(255,255,255,0.12);
+  border: 1px solid var(--border);
   color: var(--text);
   border-radius: 10px;
   padding: 10px 12px;
   cursor: pointer;
-  transition: background 0.1s ease-in-out;
+  transition: background 0.12s ease-in-out, transform 0.05s ease-in-out;
 }
 
 button:hover {
-  background: rgba(59, 130, 246, 0.15);
+  background: rgba(255,255,255,0.18);
+}
+
+button:active {
+  transform: translateY(1px);
 }
 
 .status {
@@ -160,12 +167,12 @@ button:hover {
 }
 
 .msg.user {
-  background: #f1f5f9;
+  background: rgba(255,255,255,0.08);
 }
 
 .msg.ai {
-  background: #e7f0fd;
-  border-color: rgba(59, 130, 246, 0.2);
+  background: rgba(74,163,255,0.18);
+  border-color: rgba(74,163,255,0.45);
 }
 
 .meta {
@@ -193,23 +200,26 @@ button:hover {
     grid-template-columns: 1fr;
   }
 }
-/* --- Additions for Memory + Cipher tools --- */
+
+/* --- Memory + Cipher tools (dark theme) --- */
+
 .noteBlock {
   margin-top: 12px;
   padding: 12px;
-  border: 1px solid rgba(0,0,0,0.08);
+  border: 1px solid var(--border);
   border-radius: 12px;
-  background: rgba(255,255,255,0.7);
+  background: rgba(255,255,255,0.06);
 }
 
 .noteTitle {
   font-weight: 700;
   margin-bottom: 6px;
+  color: var(--text);
 }
 
 .noteText {
   margin: 0 0 10px 0;
-  color: rgba(0,0,0,0.72);
+  color: var(--muted);
 }
 
 .noteActions {
@@ -222,26 +232,32 @@ button:hover {
 
 .noteSmall {
   font-size: 12px;
-  color: rgba(0,0,0,0.60);
+  color: var(--muted);
 }
 
 .miniLabel {
   display: block;
   font-size: 12px;
   margin: 8px 0 4px;
-  color: rgba(0,0,0,0.65);
+  color: var(--muted);
 }
 
 textarea {
   width: 100%;
   border-radius: 10px;
-  border: 1px solid rgba(0,0,0,0.12);
+  border: 1px solid var(--border);
   padding: 10px;
   resize: vertical;
+  background: rgba(255,255,255,0.08);
+  color: var(--text);
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   font-size: 12px;
 }
 
+textarea::placeholder {
+  color: var(--muted);
+}
+
 .btn-secondary {
-  background: rgba(0,0,0,0.06);
+  background: rgba(255,255,255,0.08);
 }

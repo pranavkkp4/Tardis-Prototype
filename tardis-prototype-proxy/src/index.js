@@ -3,8 +3,8 @@ export default {
    * Cloudflare Worker: JSON proxy to Hugging Face Router (OpenAI-compatible)
    *
    * Env vars:
-   *  - HF_TOKEN: Hugging Face token (fine-grained) with permission to call Inference Providers
-   *  - ALLOWED_ORIGIN: optional CORS restriction. Use "*" or your Pages origin.
+   *  - HF_TOKEN: Hugging Face token with permission to call Inference Providers
+   *  - ALLOWED_ORIGIN: optional CORS restriction ("*" or your Pages origin)
    */
   async fetch(request, env) {
     const origin = request.headers.get("Origin") || "";
@@ -29,35 +29,51 @@ export default {
       return this.json({ error: "Invalid JSON" }, 400, allowed);
     }
 
-    const {
-      model = "google/gemma-2-2b-it",
-      system = "",
-      message = "",
-      max_new_tokens = 220,
-      temperature = 0.6,
-    } = body || {};
-
-    if (!message || typeof message !== "string") {
-      return this.json({ error: "Missing message" }, 400, allowed);
-    }
-
     const hfToken = env.HF_TOKEN;
     if (!hfToken) {
       return this.json({ error: "Server not configured (missing HF_TOKEN)." }, 500, allowed);
     }
 
-    // OpenAI-compatible Hugging Face Router endpoint
-    const hfUrl = "https://router.huggingface.co/v1/chat/completions";
+    // Accept either:
+    // A) { messages: [{role, content}...], model, temperature, max_new_tokens }
+    // B) Legacy { system, message, ... } and convert to messages.
+    const {
+      model = "google/gemma-2-2b-it",
+      temperature = 0.6,
+      max_new_tokens = 220,
+      messages,
+      system = "",
+      message = "",
+    } = body || {};
 
-    const clippedSystem = String(system || "").slice(0, 4000);
-    const clippedMessage = message.slice(0, 4000);
+    let finalMessages = [];
+
+    if (Array.isArray(messages) && messages.length > 0) {
+      // Sanitize messages (size + shape)
+      finalMessages = messages
+        .filter((m) => m && typeof m.role === "string" && typeof m.content === "string")
+        .map((m) => ({
+          role: m.role.slice(0, 20),
+          content: m.content.slice(0, 8000),
+        }))
+        .slice(-40); // cap history for safety
+    } else {
+      // Legacy fallback
+      const clippedSystem = String(system || "").slice(0, 4000);
+      const clippedMessage = String(message || "").slice(0, 4000);
+      if (!clippedMessage) {
+        return this.json({ error: "Missing message" }, 400, allowed);
+      }
+      if (clippedSystem) finalMessages.push({ role: "system", content: clippedSystem });
+      finalMessages.push({ role: "user", content: clippedMessage });
+    }
+
+    // HF Router OpenAI-compatible endpoint
+    const hfUrl = "https://router.huggingface.co/v1/chat/completions";
 
     const hfPayload = {
       model,
-      messages: [
-        ...(clippedSystem ? [{ role: "system", content: clippedSystem }] : []),
-        { role: "user", content: clippedMessage },
-      ],
+      messages: finalMessages,
       temperature,
       max_tokens: max_new_tokens,
     };
@@ -88,7 +104,6 @@ export default {
       return this.json({ error: "Invalid JSON from provider" }, 502, allowed);
     }
 
-    // OpenAI-compatible response shape: choices[0].message.content
     const reply =
       parsed?.choices?.[0]?.message?.content ??
       parsed?.choices?.[0]?.text ??
