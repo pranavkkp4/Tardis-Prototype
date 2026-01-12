@@ -78,8 +78,6 @@ The entire system is deployable as a static site + serverless backend, requiring
 
 <img width="410" height="202" alt="image" src="https://github.com/user-attachments/assets/6c18209f-2e8b-4749-8ae7-012298dbcaa4" />
 
-yaml
-Copy code
 
 ---
 
