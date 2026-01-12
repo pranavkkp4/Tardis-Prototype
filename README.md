@@ -126,7 +126,8 @@ Ensure app.js contains:
 js
 Copy code
 const WORKER_BASE_URL = "https://<your-worker>.workers.dev";
-Why This Project
+
+##Why This Project
 This project demonstrates:
 
 Serverless architecture
