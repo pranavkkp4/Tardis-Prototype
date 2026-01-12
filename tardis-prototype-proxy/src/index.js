@@ -77,7 +77,11 @@ export default {
         temperature,
         return_full_text: false,
       },
+      options: {
+        wait_for_model: true,
+      },
     };
+
     let hfRes;
     try {
       hfRes = await fetch(hfUrl, {
