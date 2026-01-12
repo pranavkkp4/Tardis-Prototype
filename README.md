@@ -76,3 +76,79 @@ The entire system is deployable as a static site + serverless backend, requiring
 
 ## Project Structure
 
+/
+├── welcome.html # Landing screen with typewriter intro
+├── index.html # Main AI assistant UI
+├── app.js # Frontend logic (chat, memory, speech, ciphers)
+├── styles.css # Light grey / blue / white theme
+├── tardis-prototype-proxy/
+│ ├── wrangler.toml # Cloudflare Worker configuration
+│ └── src/
+│ └── index.js # Worker proxy (Hugging Face Router)
+
+yaml
+Copy code
+
+---
+
+## How to Run This Project Yourself
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/pranavkkp4/Tardis-Prototype.git
+cd Tardis-Prototype
+2. Deploy the Frontend (GitHub Pages)
+Push to main
+
+Enable GitHub Pages
+
+Set source to root
+
+No build step required.
+
+3. Deploy the Backend (Cloudflare Worker)
+Requirements
+Cloudflare account
+
+Node.js
+
+Wrangler CLI
+
+bash
+Copy code
+npm install -g wrangler
+Configure Secrets
+bash
+Copy code
+cd tardis-prototype-proxy
+wrangler secret put HF_TOKEN
+Your Hugging Face token must allow:
+
+Inference Providers access
+
+Deploy
+bash
+Copy code
+wrangler deploy
+4. Connect Frontend to Backend
+Ensure app.js contains:
+
+js
+Copy code
+const WORKER_BASE_URL = "https://<your-worker>.workers.dev";
+Why This Project
+This project demonstrates:
+
+Serverless architecture
+
+Secure AI API usage
+
+Conversational UX design
+
+Stateful chat without databases
+
+Browser-native speech interfaces
+
+Practical debugging and deployment workflows
+
+It was built to be simple, explainable, and easily shareable, while still showcasing real-world AI integration.
