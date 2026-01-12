@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Welcome | Tardis Prototype</title>
+
+  <style>
+    :root {
+      --navy: #0b1f3a;
+      --white: #ffffff;
+      --blue: #4aa3ff;
+    }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
+
+    body {
+      background: var(--navy);
+      color: var(--white);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      width: min(720px, 92vw);
+      text-align: center;
+      padding: 32px 20px;
+    }
+
+    h1 {
+      margin: 0 0 20px 0;
+      font-size: clamp(30px, 4vw, 42px);
+      font-weight: 750;
+      letter-spacing: 0.6px;
+    }
+
+    .typewriter {
+      font-size: clamp(18px, 2.4vw, 22px);
+      line-height: 1.6;
+      min-height: 3.2em; /* prevents layout jump */
+      max-width: 56ch;
+      margin: 0 auto 28px auto;
+    }
+
+    .caret {
+      display: inline-block;
+      width: 10px;
+      margin-left: 4px;
+      animation: blink 1s step-end infinite;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+    .enter-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 26px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      background: rgba(255, 255, 255, 0.12);
+      color: var(--white);
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.15s ease, transform 0.08s ease, border-color 0.15s ease;
+      user-select: none;
+    }
+
+    .enter-btn:hover {
+      background: rgba(255, 255, 255, 0.18);
+      border-color: rgba(255, 255, 255, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .enter-btn:active {
+      transform: translateY(0);
+    }
+
+    .footer {
+      margin-top: 26px;
+      font-size: 13px;
+      opacity: 0.85;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="container">
+    <h1>Tardis Prototype</h1>
+
+    <div class="typewriter" aria-live="polite">
+      <span id="typedText"></span><span class="caret">▌</span>
+    </div>
+
+    <!-- Correct link to the assistant -->
+    <a href="index.html" class="enter-btn" id="enterBtn">
+      Enter
+    </a>
+
+    <div class="footer">
+      Powered by Cloudflare Workers and Hugging Face.
+    </div>
+  </main>
+
+  <script>
+    // Typewriter effect
+    const text = "Welcome to Tardis. Click here to enter.";
+    const output = document.getElementById("typedText");
+    const enterBtn = document.getElementById("enterBtn");
+
+    let i = 0;
+    const speed = 35;
+
+    function type() {
+      output.textContent = text.slice(0, i);
+      i++;
+      if (i <= text.length) {
+        setTimeout(type, speed);
+      } else {
+        // Focus button once typing completes (keyboard-friendly)
+        enterBtn.focus();
+      }
+    }
+
+    type();
+  </script>
+</body>
+</html>
