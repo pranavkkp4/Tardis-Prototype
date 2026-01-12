@@ -9,7 +9,7 @@
 
 // TODO: After deploying your Cloudflare Worker, set this constant to the
 // base URL of your worker (e.g. "https://tardis-proxy.<your-subdomain>.workers.dev").
-const WORKER_BASE_URL = "https://REPLACE_ME.workers.dev";
+const WORKER_BASE_URL = "https://tardis-proxy.pranav-tardis.workers.dev";
 
 // Grab references to important DOM elements
 const el = (id) => document.getElementById(id);
