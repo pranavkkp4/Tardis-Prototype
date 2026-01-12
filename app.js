@@ -3,7 +3,7 @@
 // This script powers the interactive behaviour of the Tardis Prototype page.
 // It manages the chat log, slider interactions, speech recognition and
 // synthesis, and communicates with a Cloudflare Worker that proxies
-// language model requests.  To use this file in your own deployment,
+// language model requests. To use this file in your own deployment,
 // replace WORKER_BASE_URL with the URL of your Worker (without a
 // trailing slash).
 
@@ -48,7 +48,6 @@ function addMessage(role, text) {
   wrap.appendChild(body);
 
   log.appendChild(wrap);
-  // Scroll to the bottom of the log
   log.scrollTop = log.scrollHeight;
 }
 
@@ -69,10 +68,10 @@ function buildSystemPrompt() {
       ? "Use dry, understated humour sparingly where appropriate."
       : humor >= 35
       ? "Occasionally use light wit, but keep it professional."
-      : "No humour; be direct and mission‑focused.";
+      : "No humour; be direct and mission-focused.";
 
   return [
-    "You are Tardis: a practical, safety‑bounded mission assistant inspired by science fiction.",
+    "You are Tardis: a practical, safety-bounded mission assistant inspired by science fiction.",
     honestyRule,
     humorRule,
     "Keep responses concise but complete.",
@@ -102,12 +101,21 @@ async function callProxy(userText) {
     max_new_tokens: 220,
     temperature: 0.6
   };
+
   const url = `${WORKER_BASE_URL}/api/chat`;
+
+  // --- Added: timeout support (prevents hanging forever) ---
+  const controller = new AbortController();
+  const t = setTimeout(() => controller.abort(), 60000); // 60s timeout
+
   const res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
-  });
+    body: JSON.stringify(payload),
+    signal: controller.signal
+  }).finally(() => clearTimeout(t));
+  // --- end timeout support ---
+
   if (!res.ok) {
     const txt = await res.text();
     throw new Error(`HTTP ${res.status}: ${txt}`);
@@ -120,9 +128,11 @@ form.addEventListener("submit", async (e) => {
   e.preventDefault();
   const userText = msg.value.trim();
   if (!userText) return;
+
   msg.value = "";
   addMessage("user", userText);
   statusEl.textContent = "Thinking…";
+
   try {
     const data = await callProxy(userText);
     const reply = (data.reply || "").trim();
@@ -131,10 +141,11 @@ form.addEventListener("submit", async (e) => {
     statusEl.textContent = "Ready";
   } catch (err) {
     console.error(err);
-    addMessage(
-      "ai",
-      "Request failed. The proxy may be warming up or rate‑limited. Please try again later."
-    );
+
+    // --- Added: show real error message (temporary, great for debugging) ---
+    addMessage("ai", `Request failed: ${String(err?.message || err)}`);
+    // --- end debug message ---
+
     statusEl.textContent = "Error";
   }
 });
@@ -146,27 +157,29 @@ let listening = false;
 function setupSpeechRecognition() {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SR) return null;
+
   const rec = new SR();
   rec.lang = "en-US";
   rec.interimResults = true;
   rec.continuous = false;
+
   rec.onstart = () => {
     listening = true;
     statusEl.textContent = "Listening…";
     micBtn.textContent = "⏹ Stop";
   };
+
   rec.onend = () => {
     listening = false;
     statusEl.textContent = "Ready";
     micBtn.textContent = "🎙️ Mic";
   };
+
   rec.onerror = (e) => {
     console.error(e);
-    addMessage(
-      "ai",
-      "Microphone error. Please allow microphone access and try again."
-    );
+    addMessage("ai", "Microphone error. Please allow microphone access and try again.");
   };
+
   rec.onresult = (event) => {
     let transcript = "";
     for (let i = event.resultIndex; i < event.results.length; i++) {
@@ -174,6 +187,7 @@ function setupSpeechRecognition() {
     }
     msg.value = transcript.trim();
   };
+
   return rec;
 }
 
