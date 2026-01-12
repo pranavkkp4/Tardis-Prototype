@@ -76,15 +76,7 @@ The entire system is deployable as a static site + serverless backend, requiring
 
 ## Project Structure
 
-/
-├── welcome.html # Landing screen with typewriter intro
-├── index.html # Main AI assistant UI
-├── app.js # Frontend logic (chat, memory, speech, ciphers)
-├── styles.css # Light grey / blue / white theme
-├── tardis-prototype-proxy/
-│ ├── wrangler.toml # Cloudflare Worker configuration
-│ └── src/
-│ └── index.js # Worker proxy (Hugging Face Router)
+<img width="410" height="202" alt="image" src="https://github.com/user-attachments/assets/6c18209f-2e8b-4749-8ae7-012298dbcaa4" />
 
 yaml
 Copy code
